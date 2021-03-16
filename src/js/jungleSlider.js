@@ -1730,32 +1730,7 @@
 
 		return _;
 	};
-})( jQuery );
 
-
-// HELPER FUNCTIONS //
-
-function isElementInViewport (el = undefined) {
-
-	if (typeof el !== undefined && el !== null) {
-		// Special bonus for those using jQuery
-		if (typeof jQuery === "function" && el instanceof jQuery) {
-			el = el[0];
-		}
-
-		var rect = el.getBoundingClientRect();
-
-		return (
-			rect.top >= 0 &&
-			rect.left >= 0 &&
-			rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /* or $(window).height() */
-			rect.right <= (window.innerWidth || document.documentElement.clientWidth) /* or $(window).width() */
-		);
-	}else{
-		return false;
-	}
-
-}
 
 function onVisibilityChange(el = undefined, callback) {
     var old_visible;
@@ -1937,4 +1912,30 @@ function getClosestValue(myArray, myValue){
 	while(myArray[++i] < myValue);
 
 	return i;
+}
+})( jQuery );
+
+
+// HELPER FUNCTIONS //
+
+function isElementInViewport (el = undefined) {
+
+	if (typeof el !== undefined && el !== null) {
+		// Special bonus for those using jQuery
+		if (typeof jQuery === "function" && el instanceof jQuery) {
+			el = el[0];
+		}
+
+		var rect = el.getBoundingClientRect();
+
+		return (
+			rect.top >= 0 &&
+			rect.left >= 0 &&
+			rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /* or $(window).height() */
+			rect.right <= (window.innerWidth || document.documentElement.clientWidth) /* or $(window).width() */
+		);
+	}else{
+		return false;
+	}
+
 }
