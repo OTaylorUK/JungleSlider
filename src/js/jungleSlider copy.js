@@ -1,4 +1,16 @@
-(function ($) {
+
+(function (factory) {
+	'use strict';
+	if (typeof define === 'function' && define.amd) {
+		define(['jquery'], factory);
+	} else if (typeof exports !== 'undefined') {
+		module.exports = factory(require('jquery'));
+	} else {
+		factory(jQuery);
+	}
+
+}(function ($) {
+	'use strict';
 	var jungleSlide = window.jungleSlide || {};
 
 	/* SLIDER OBJECT */
@@ -984,7 +996,7 @@
 		}
 
 
-		if(_.navigation_dragging === false || _.navigation_obj.moving === false){
+		if(_.navigation_dragging == false || _.navigation_obj.moving === false){
 			return false
 		}
 		
@@ -1730,7 +1742,7 @@
 
 		return _;
 	};
-})( jQuery );
+}));
 
 
 // HELPER FUNCTIONS //
