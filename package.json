@@ -1,0 +1,25 @@
+{
+  "name": "jungleslider",
+  "version": "1.0.0",
+  "description": "carousel/slider",
+  "main": "./dist/js/jungleSlider.min.js",
+  "files": [
+    "/dist/"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OTaylorUK/JungleSlider.git"
+  },
+  "keywords": [
+    "carousel"
+  ],
+  "author": "Ollie Taylor",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/OTaylorUK/JungleSlider/issues"
+  },
+  "homepage": "https://github.com/OTaylorUK/JungleSlider#readme"
+}
