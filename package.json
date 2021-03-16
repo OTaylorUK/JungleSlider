@@ -1,6 +1,6 @@
 {
   "name": "jungleslider",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "carousel/slider",
   "main": "./dist/js/jungleSlider.min.js",
   "files": [
