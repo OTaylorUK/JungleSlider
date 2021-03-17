@@ -240,6 +240,17 @@
 			// cannot increase by less than 1 //
 			_.options.scroll.increment_by = 1;
 		}
+
+		if (_.options.scroll.infinite_scroll === true) {
+			if (_.options.scroll.allowed_direction === 'left') {
+				_.prepend_allowed = true
+			} else if (_.options.scroll.allowed_direction === 'right') {
+				_.append_allowed = true
+			} else {
+				_.append_allowed = true
+				_.prepend_allowed = true
+			}
+		}
 		
 	};
 
@@ -324,38 +335,34 @@
 					if (targetBreakpoint !== _.activeBreakpoint || forceUpdate) {
 						_.activeBreakpoint =
 							targetBreakpoint;
-						
-                      
-						_.options = $.extend({}, _.originalSettings,
-							_.breakpointSettings[
+
+						_.options = $.extend(true, {}, _.originalSettings, _.breakpointSettings[
 							targetBreakpoint]);
-						if (initial === true) {
-							_.currentSlide = _.options.initialSlide;
-						}
-						_.refresh(initial);
+					
+						_.refresh();
 						triggerBreakpoint = targetBreakpoint;
 					}
 				} else {
 
+					console.log(_.originalSettings);
+					
+					console.log(_.breakpointSettings[
+						targetBreakpoint]);
 
 					_.activeBreakpoint = targetBreakpoint;
-					_.options = $.extend({}, _.originalSettings,
-						_.breakpointSettings[
+					_.options = $.extend(true, {}, _.originalSettings, 	_.breakpointSettings[
 						targetBreakpoint]);
-					if (initial === true) {
-						_.currentSlide = _.options.initialSlide;
-					}
-					_.refresh(initial);
+				
+					_.refresh(true);
+
 					triggerBreakpoint = targetBreakpoint;
 				}
 			} else {
 				if (_.activeBreakpoint !== null) {
 					_.activeBreakpoint = null;
 					_.options = _.originalSettings;
-					if (initial === true) {
-						_.currentSlide = _.options.initialSlide;
-					}
-					_.refresh(initial);
+					_.refresh();
+
 					triggerBreakpoint = targetBreakpoint;
 				}
 			}
@@ -544,15 +551,6 @@
 		
 
 		if (_.options.scroll.infinite_scroll === true  ) {
-			if (_.options.scroll.allowed_direction === 'left') { 
-				_.prepend_allowed = true
-			}else if (_.options.scroll.allowed_direction === 'right') { 
-				_.append_allowed = true
-			} else {
-				_.append_allowed = true
-				_.prepend_allowed = true
-			}
-
 			if (_.append_allowed === true) {
 				build_clones('append', _.$track, _.slideCountOriginal, _.SlidesInGroup, _.options.scroll.increment_by);
 			}
@@ -629,10 +627,12 @@
 					_.$nextArrow = button_element;
 				}
 			}
+
 			if (add_element === true) {
 				button_element.appendTo(button_append);
 			}
 		});
+
 	};
 
 	jungleSlide.prototype.buildNavigation = function () {
@@ -1650,6 +1650,8 @@
 
 		_.currentSlide = 1;
 
+
+		console.log(_);
 		_.destroy(true);
 
 		$.extend(_, _.initials, { currentSlide: _.currentSlide });
@@ -1684,9 +1686,10 @@
 	jungleSlide.prototype.init = function (init) {
 
 		var _ = this;
-		_.registerBreakpoints();
 
+		_.registerBreakpoints();
 		_.defineConstants();
+
 
 
 		// builds the slider elements //
@@ -1700,8 +1703,8 @@
 			_.autoplay();
 		}
 
-
 		_.checkResponsive();
+
 		
 
 
