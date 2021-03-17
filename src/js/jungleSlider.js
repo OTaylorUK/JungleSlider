@@ -125,12 +125,15 @@
 			// MERGE DEFAULT SETTINGS + USER DEFINED SETTINGS + DATA ATTRIBUTE SETTINGS //
 			_.options = $.extend(true, {}, _.defaults, settings, dataSettings);
 
+			_.originalSettings = _.options;
+
+
 			// FUNCTIONS //
 
 			/** SETTINGS */
 			_.defineConstants = $.proxy(_.defineConstants, _, element);
 			_.registerBreakpoints = $.proxy(_.registerBreakpoints, _);
-			_.checkResponsive = $.proxy(_.registerBreakpoints, _);
+			_.checkResponsive = $.proxy(_.checkResponsive, _);
 			
 			/** BUILDING BLOCKS */
 			_.buildTheJungle = $.proxy(_.buildTheJungle, _);
@@ -187,7 +190,6 @@
 
 			// START BUILD //
 			_.init(true);
-
 
 		}
 
@@ -249,6 +251,7 @@
 
 			// if there are responsive settings it will be a type of array  && the array has settings in it then it'll be more than 0
 
+
 		if ($.type(responsiveSettings) === 'array' && responsiveSettings.length) {
 
 			// responds to the window OR slider width - defined in settings
@@ -284,7 +287,6 @@
 			}
 
 			// uses mobile first as default - can change in settings
-
 			_.breakpoints.sort(function (a, b) {
 				return (_.options.mobileFirst) ? a - b : b - a;
 			});
@@ -301,7 +303,6 @@
 			windowWidth = window.innerWidth || $(window).width(),
 			wrapperWidth = _.$wrapper.width();
 		
-
 		if (_.options.responsive !== null && _.options.responsive.length > 0) {
 
 			targetBreakpoint = null;
@@ -317,10 +318,13 @@
 			}
 
 			if (targetBreakpoint !== null) {
+
 				if (_.activeBreakpoint !== null) {
+
 					if (targetBreakpoint !== _.activeBreakpoint || forceUpdate) {
 						_.activeBreakpoint =
 							targetBreakpoint;
+						
                       
 						_.options = $.extend({}, _.originalSettings,
 							_.breakpointSettings[
@@ -332,6 +336,8 @@
 						triggerBreakpoint = targetBreakpoint;
 					}
 				} else {
+
+
 					_.activeBreakpoint = targetBreakpoint;
 					_.options = $.extend({}, _.originalSettings,
 						_.breakpointSettings[
@@ -940,11 +946,6 @@
 
 		var moveAmount = _.navigation_obj.current_x ;
 
-		// console.log( _.$nav_drag_increment_stages.filter(function (nav_slide) {
-		// 	if (nav_slide.min >= moveAmount && nav_slide.min <= moveAmount) {
-		// 		return nav_slide.position;
-		// 	}
-		// }));
 		var snap_to_element = _.$nav_drag_increment_stages.filter(function (nav_slide) {
 			if (moveAmount  >= nav_slide.min && moveAmount  <= nav_slide.max) {
 				return nav_slide.position;
@@ -1683,8 +1684,10 @@
 	jungleSlide.prototype.init = function (init) {
 
 		var _ = this;
+		_.registerBreakpoints();
 
 		_.defineConstants();
+
 
 		// builds the slider elements //
 		_.buildTheJungle();
@@ -1697,7 +1700,9 @@
 			_.autoplay();
 		}
 
+
 		_.checkResponsive();
+		
 
 
 	};
