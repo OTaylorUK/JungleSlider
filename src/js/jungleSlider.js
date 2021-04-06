@@ -198,7 +198,7 @@
 
 	}());
 
-
+ 
 	/** SETTINGS */
 	jungleSlide.prototype.defineConstants = function () {
 		var _ = this;
@@ -218,7 +218,8 @@
 		
 		
 		// define number of slides visible //
-		if (_.options.scroll.slides_visible >= _.slideCountOriginal) {
+		if (_.options.scroll.slides_visible >= (_.slideCountOriginal * 2 )) {
+		// if (_.options.scroll.slides_visible >= _.slideCountOriginal)
 			// cannot be more than there is so set max to be the total slides
 			_.SlidesInGroup = _.slideCountOriginal;
 			_.doNotMakeSlider = true;
