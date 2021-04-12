@@ -218,14 +218,15 @@
 		
 		
 		// define number of slides visible //
-		if (_.options.scroll.slides_visible >= (_.slideCountOriginal * 2 )) {
+		if (_.options.scroll.slides_visible >= (_.slideCountOriginal * 2)) {
 		// if (_.options.scroll.slides_visible >= _.slideCountOriginal)
 			// cannot be more than there is so set max to be the total slides
 			_.SlidesInGroup = _.slideCountOriginal;
 			_.doNotMakeSlider = true;
 		} else if (_.options.scroll.slides_visible <= 1) {
 			// cannot be less than 1 slide visible
-			_.SlidesInGroup = 1;
+			_.SlidesInGroup = _.slideCountOriginal;
+
 		} else {
 			_.SlidesInGroup = _.options.scroll.slides_visible;
 		}
@@ -233,7 +234,7 @@
 		// define the increment amount
 		if (_.options.scroll.increment_by == 'default') {
 			// by default this is the same as the slides visible //
-			_.options.scroll.increment_by = _.SlidesInGroup;
+			_.options.scroll.increment_by = 1;
 		} else if (_.options.scroll.increment_by > _.SlidesInGroup) {
 			// cannot increase by more than the slides visible //
 			_.options.scroll.increment_by = _.SlidesInGroup;
@@ -345,11 +346,6 @@
 					}
 				} else {
 
-					console.log(_.originalSettings);
-					
-					console.log(_.breakpointSettings[
-						targetBreakpoint]);
-
 					_.activeBreakpoint = targetBreakpoint;
 					_.options = $.extend(true, {}, _.originalSettings, 	_.breakpointSettings[
 						targetBreakpoint]);
@@ -455,6 +451,9 @@
 		if (_.options.animations.fade_effect === true) {
 			slide_transition = `opacity ${trans_duration} ${trans_prop} ${trans_delay}`;
 		}
+		var num = _.options.scroll.increment_by;
+
+		let current_slide_group = 0;
 
 		_.$SliderChildren.each(function (i = 0) {
 			var content = $(_.$SliderChildren.get(i));
@@ -463,12 +462,22 @@
 				.wrap('<div/>')
 				.parent()
 				.addClass('jungle_slide original')
-				.attr('slide-id', i + 1)
+				.attr({
+					'slide-id': i + 1,
+				})
 				.css({
 					width: `${_.individualSlideWidth}px`,
 					'transition': slide_transition,
 
 				})
+			
+				// only add to the first slide in the group to avoid conflicts when finding 'closest' slide on nav click
+				if (i % num === 0) {
+					current_slide_group++;
+					$(slide).attr({
+						'slide-group-num': current_slide_group,
+					})
+				} 
 
 			_.$track.append(slide);
 			i++;
@@ -637,6 +646,99 @@
 	};
 
 	jungleSlide.prototype.buildNavigation = function () {
+		var _ = this;
+
+
+		var layout = _.options.layout.order.navigation;
+		var navigation_type = _.options.navigation.type;
+		var navigation_class = _.options.navigation.class;
+		var navigation_style = _.options.navigation.style;
+		var navigation_append = _.options.navigation.append;
+
+		// _.$element.add('div');
+
+		var navigation_wrapper = $('<div>', {class: 'jungle_navigation'});
+		var navigation_track = $('<div>', {class: 'jungle_navigation_track'});
+
+		var num = _.slideCountOriginal % _.SlidesInGroup;
+		var add_nav = false;
+		var final_num;
+		
+		for (let i = 1; i < _.slideCountOriginal / _.options.scroll.increment_by + 1; i++) {
+			add_nav = true;
+
+			// if (i % num === 0) {
+			// 	add_nav = true;
+			// 	final_num = i
+			// }
+			// if (i == 1) {
+			// 	add_nav = true;
+			// }
+			var nav_element = $(navigation_type)
+			.html('')
+			.attr('slide-id', i );
+
+			if (add_nav === true) {
+				if (navigation_style === 'drag_line' && i == 1) {
+					nav_element.appendTo(navigation_track);
+					nav_element.addClass(' navigation_drag');
+					navigation_track.appendTo(navigation_wrapper);
+
+				} else if (navigation_style !== 'drag_line') {
+					nav_element.addClass(navigation_class)
+					nav_element.appendTo(navigation_wrapper);
+
+				}
+
+			}
+
+			add_nav = false;
+			
+
+		}
+	
+		$(navigation_wrapper)
+			.attr('navigation-style', navigation_style)
+			.css({
+				order: layout,
+				'--navigation-item-number': final_num
+			});
+
+		_.$navigation_wrapper = navigation_wrapper;
+		navigation_wrapper.appendTo(navigation_append);
+
+		_.$nav_wrapper_width = _.$navigation_wrapper.outerWidth();
+
+		if (navigation_style === 'drag_line') {
+			_.$nav_drag_line = _.$navigation_wrapper.find('.navigation_drag');
+		
+			_.$nav_drag_increment_amount = _.$nav_wrapper_width / parseInt(final_num);
+			_.nav_item_number = final_num;
+
+			var nav_width_increments = [];
+			_.nav_positions = [];
+			_.$nav_drag_offset = _.$nav_drag_increment_amount / 2;
+			var position,
+				sensitivity;
+	
+			for (let index = 0; index < _.nav_item_number; index++) {
+				position = Math.round((_.$nav_drag_increment_amount * (index + 1)) - _.$nav_drag_increment_amount);
+				sensitivity = 	Math.round(_.$nav_drag_increment_amount / 4);
+	
+				_.nav_positions[index] = position;
+	
+				nav_width_increments[index] = {
+					slide_id: index + 1,
+					position: position,
+					min: position - sensitivity,
+					max: position + sensitivity,
+				};
+			}
+			_.$nav_drag_increment_stages = nav_width_increments;
+		}
+
+	};
+	jungleSlide.prototype.buildNavigationOriginal = function () {
 		var _ = this;
 
 		var layout = _.options.layout.order.navigation;
@@ -1256,7 +1358,6 @@
 		var is_a_clone = false;
 		var true_clone_id;
 
-
 		if (action !== undefined) {
 			var direction = action.data.direction;
 			var track_reset = action.data.track_reset;
@@ -1302,12 +1403,11 @@
 					clicked_nav_id = parseInt($clicked_navigation_element.attr('slide-id'));
 				}
 			
-				
 				var current_slide = _.$track.children(`.current-slide`);
 				var current_slide_index = $(current_slide).index();
 
-				var next_index = $(current_slide).nextAll(`[slide-id="${clicked_nav_id}"]`).index();
-				var prev_index = $(current_slide).prevAll(`[slide-id="${clicked_nav_id}"]`).index();
+				var next_index = $(current_slide).nextAll(`[slide-group-num="${clicked_nav_id}"]`).index();
+				var prev_index = $(current_slide).prevAll(`[slide-group-num="${clicked_nav_id}"]`).index();
 
 				var index_arr = [
 					next_index,
@@ -1341,7 +1441,6 @@
 
 				} else {
 					nextSlide = _.currentSlide;
-					
 				}
 			}
 		} else {
@@ -1426,12 +1525,13 @@
 		var stop_loop = false;
 
 		var visible_slides = _.options.scroll.slides_visible - 1;
+		// console.log(_.options.scroll.slides_visible);
 		_.$track.children().each(function () {
 			$(this).removeClass('current-slide visible');
 
 			if ($(this).attr('actual-id') == _.currentSlide && stop_loop === false) {
 				$(this).addClass('current-slide');
-				var slide_id = $(this).attr('slide-id');
+				var slide_id = $(this).attr('slide-group-num');
 				current_slide_index = $(this).index();
 				_.currentSlideElement = this;
 				_.trueCurrentSlideID = parseInt(slide_id);
@@ -1482,7 +1582,7 @@
 		var _ = this;
 
 		_.sliderWidth = _.$wrapper.outerWidth();
-		_.individualSlideWidth = _.sliderWidth / _.SlidesInGroup;
+		_.individualSlideWidth = _.sliderWidth / _.options.scroll.slides_visible;
 		_.incrementAmount = _.individualSlideWidth * _.options.scroll.increment_by;
 		
 		_.$track.children().each(function (i = 0) {
@@ -1652,7 +1752,6 @@
 		_.currentSlide = 1;
 
 
-		console.log(_);
 		_.destroy(true);
 
 		$.extend(_, _.initials, { currentSlide: _.currentSlide });
