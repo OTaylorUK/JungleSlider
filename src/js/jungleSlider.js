@@ -1540,8 +1540,16 @@
 		});
 		_.visible_selectors = current_slide_index + visible_slides;
 
+
 		for (let index = current_slide_index; index <= _.visible_selectors; index++) {
-			_.$track.children().eq(index).addClass('visible ');
+			let class_to_add = 'visible';
+
+			if (index == current_slide_index) {
+				class_to_add += ' first-visible';
+			} else if (index == _.visible_selectors) {
+				class_to_add += ' last-visible';
+			}
+			_.$track.children().eq(index).addClass(class_to_add);
 		}
 		_.$element.attr('data-current-slide', _.trueCurrentSlideID);
 

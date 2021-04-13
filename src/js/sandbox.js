@@ -19,8 +19,8 @@
 
 		$('.grid_container').jungleSlide({
 			scroll:{
-				slides_visible: 5,
-				increment_by: 3,
+				slides_visible: 3,
+				increment_by: 1,
 			},
 		});
 
