@@ -1527,7 +1527,7 @@
 		var visible_slides = _.options.scroll.slides_visible - 1;
 		// console.log(_.options.scroll.slides_visible);
 		_.$track.children().each(function () {
-			$(this).removeClass('current-slide visible');
+			$(this).removeClass('first-visible last-visible current-slide visible');
 
 			if ($(this).attr('actual-id') == _.currentSlide && stop_loop === false) {
 				$(this).addClass('current-slide');
