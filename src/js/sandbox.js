@@ -22,15 +22,14 @@
 				slides_visible: 3,
 				increment_by: 1,
 			},
+		});
 
-			responsive: [
-				{
-					breakpoint: 1020,
-					settings: {
-						destroyTheJungle: true
-					}
-				}
-			]
+	
+		$('.empty_container').jungleSlide({
+			scroll:{
+				slides_visible: 3,
+				increment_by: 1,
+			},
 		});
 
 	});

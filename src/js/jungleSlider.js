@@ -189,7 +189,11 @@
 
 
 			// START BUILD //
-			_.init(true);
+
+			if (_.$element.children().length !== 0) {
+				_.init(true);
+			} 
+
 
 		}
 
@@ -1794,6 +1798,10 @@
 	jungleSlide.prototype.init = function (init) {
 
 		var _ = this;
+
+		if (_.$element.children().length === 0) {
+			return false;
+		} 
 
 		_.registerBreakpoints();
 		_.defineConstants();
