@@ -1787,7 +1787,7 @@
 	jungleSlide.prototype.destroyTheJungle = function () {
 		var _ = this;
 		_.destroy();
-		_.init();
+		// _.init();
 	};
 
 	/* INITIALISE SLIDER */
